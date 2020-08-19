@@ -93,6 +93,9 @@ Run on multiple machines:
         help="initialization URL for pytorch distributed backend. See "
         "https://pytorch.org/docs/stable/distributed.html for details.",
     )
+    parser.add_argument('--aml', action='store_true', help='whether to train on aml')
+    parser.add_argument('--aml_data_store', default='yichnew', help='aml data_store name')
+    parser.add_argument('--aml_work_dir_prefix', default='work_dirs/detectron2/', help='aml work_dir prefix')
     parser.add_argument(
         "opts",
         help="Modify config options using the command-line",
@@ -114,6 +117,17 @@ def default_setup(cfg, args):
         cfg (CfgNode): the full config to be used
         args (argparse.NameSpace): the command line arguments to be logged
     """
+    if args.aml:
+        data_store = os.environ['AZUREML_DATAREFERENCE_{}'.format(args.aml_data_store)]
+        cfg.defrost()
+        cfg.OUTPUT_DIR = os.path.join(data_store, args.aml_work_dir_prefix, os.path.splitext(os.path.basename(args.config_file))[0])
+        cfg.freeze()
+        print('output directory: ', cfg.OUTPUT_DIR)
+    else:
+        cfg.defrost()
+        cfg.OUTPUT_DIR = os.path.join('./work_dirs', os.path.splitext(os.path.basename(args.config_file))[0])
+        cfg.freeze()
+
     output_dir = cfg.OUTPUT_DIR
     if comm.is_main_process() and output_dir:
         PathManager.mkdirs(output_dir)
