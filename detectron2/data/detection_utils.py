@@ -23,6 +23,8 @@ from detectron2.structures import (
     polygons_to_bitmask,
 )
 
+from detectron2.d2_custom import imread
+
 from . import transforms as T
 from .catalog import MetadataCatalog
 
@@ -173,7 +175,8 @@ def read_image(file_name, format=None):
             supported image modes in PIL or "BGR"; float (0-1 for Y) for YUV-BT.601.
     """
     with PathManager.open(file_name, "rb") as f:
-        image = Image.open(f)
+        image = imread(f)
+        # image = Image.open(f)
 
         # work around this bug: https://github.com/python-pillow/Pillow/issues/3973
         image = _apply_exif_orientation(image)

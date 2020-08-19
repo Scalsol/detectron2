@@ -46,6 +46,14 @@ _PREDEFINED_SPLITS_COCO["coco"] = {
     "coco_2017_val_100": ("coco/val2017", "coco/annotations/instances_val2017_100.json"),
 }
 
+_PREDEFINED_SPLITS_COCO["coco"].update({
+    "coco_2017_train_zip": ("zip://coco/train2017.zip@", "coco/annotations/instances_train2017.json"),
+    "coco_2017_val_zip": ("zip://coco/val2017.zip@", "coco/annotations/instances_val2017.json"),
+    "coco_2017_test_zip": ("zip://coco/test2017.zip@", "coco/annotations/image_info_test2017.json"),
+    "coco_2017_test-dev_zip": ("zip://coco/test2017.zip@", "coco/annotations/image_info_test-dev2017.json"),
+    "coco_2017_val_100_zip": ("zip://coco/val2017.zip@", "coco/annotations/instances_val2017_100.json"),
+})
+
 _PREDEFINED_SPLITS_COCO["coco_person"] = {
     "keypoints_coco_2014_train": (
         "coco/train2014",
@@ -109,7 +117,7 @@ def register_all_coco(root):
                 key,
                 _get_builtin_metadata(dataset_name),
                 os.path.join(root, json_file) if "://" not in json_file else json_file,
-                os.path.join(root, image_root),
+                os.path.join(root, image_root) if "zip://" not in image_root else "zip://" + os.path.join(root, image_root[6:])
             )
 
     for (
