@@ -118,7 +118,7 @@ def default_setup(cfg, args):
         args (argparse.NameSpace): the command line arguments to be logged
     """
     if args.aml:
-        data_store = os.environ['AZUREML_DATAREFERENCE_{}'.format(args.aml_data_store)]
+        data_store = '/' + os.environ['AZUREML_DATAREFERENCE_{}'.format(args.aml_data_store)].split('/')[-1]
         cfg.defrost()
         cfg.OUTPUT_DIR = os.path.join(data_store, args.aml_work_dir_prefix, os.path.splitext(os.path.basename(args.config_file))[0])
         cfg.freeze()
